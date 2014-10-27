@@ -1,34 +1,58 @@
-
-
+<!DOCTYPE html>
 <html>
-<head>
-        <link rel="stylesheet" type="text/css" href="../css/receiver.css" />
-<body class="initial">
-        <div class="messages">
-                <h1>Waiting for Messages...</h1>
-        </div>
-</body>
+  <head>
+    <title>Custom receiver</title>
+    <script src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js"></script>
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet" type="text/css">
+    <script src="cast-away.js"></script>
+    <style>
+      body {
+        background: white;
+        color: #000;
+        text-align: center;
+        font-size: 40px;
+        font-family: helvetica;
+      }
+      ul {
+        margin-top: 50px;
+      }
+      li {
+        list-style-type: none;
+      }
+      h1 {
+        font-weight: 300;
+        font-family: 'Open Sans';
+        font-size: 100px;
+        border-bottom: 1px solid #CCC;
+        width: 800px;
+        margin: auto;
+      }
+      h1 span {
+        margin: 0 -12px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      window.onload = function() {
+        var castAway = new CastAway(),
+            receiver = castAway.receive();
 
-<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-<script src="https://www.gstatic.com/cast/js/receiver/1.0/cast_receiver.js"></script>
-<script>
-        $(function() {
-                var receiver = new cast.receiver.Receiver('F8EF8B9C', ['HelloWorld']),
-                        channelHandler = new cast.receiver.ChannelHandler('HelloWorld'),
-                        $messages = $('.messages'),
-                        $body = $('body');
-
-                channelHandler.addChannelFactory(
-                        receiver.createChannelFactory('HelloWorld'));
-
-                receiver.start();
-
-                channelHandler.addEventListener(cast.receiver.Channel.EventType.MESSAGE, onMessage.bind(this));
-
-                function onMessage(event) {
-                        $messages.html(event.message.type);
-                }
+        receiver.on("displayMessage", function(data) {
+          $("#messages").append("<li>" + data.message + "</li>");
         });
-</script>
-
+      }
+    </script>
+    <h1>
+      <span style="color:#AF81C9">C</span>
+      <span style="color:#F89A7E">u</span>
+      <span style="color:#F2CA85">s</span>
+      <span style="color:#54D1F1">t</span>
+      <span style="color:#7C71AD">o</span>
+      <span style="color:#73D34A">mut</span>
+      receiver
+    </h1>
+    <ul id="messages"></ul>
+  </body>
 </html>
