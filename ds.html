@@ -1,85 +1,32 @@
 <html>
-
-<script src="https://www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js">
-</script>
-<script type="text/javascript">
-    var app_id = "217E0495",
-    //"711281B8";
-    var namespace = "urn:x-cast:json";
-
-    function log(str)
-    {
-        console.log(str);
-
-        var newSpan = document.createElement("span");
-        var newContent = document.createTextNode(str);
-        newSpan.appendChild(newContent);
-
-        var root = document.getElementById("root");
-        root.appendChild(newSpan);
-        root.appendChild(document.createElement("br"));
-    }
-
-    function onChannelOpened(event)
-    {
-        log("onChannelOpened. Total number of channels: " + window.castReceiverManager.getSenders().length);
-    }
-
-    function onChannelClosed(event)
-    {
-        log("onChannelClosed. Total number of channels: " + window.castReceiverManager.getSenders().length);
-        if (window.castReceiverManager.getSenders().length == 0) window.close();
-    }
-
-    function onError()
-    {
-        log("onError");
-    }
-
-    function onMessage(event)
-    {
-        var message = event.data;
-        var senderId = event.senderId;
-        log("message from: " + senderId + " message: " + message);
-    }
-
-    function onLoad()
-	{
-        log("document loaded");
-
-        window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-
-        window.castReceiverManager.onSenderConnected = onChannelOpened;
-        window.castReceiverManager.onSenderDisconnected = onChannelClosed;
-
-        window.customMessageBus = window.castReceiverManager.getCastMessageBus(namespace);
-        window.customMessageBus.onMessage = onMessage;
-
-
-        window.castReceiverManager.start();
-
-        log("cast started");
-
-    	window.setInterval(onTimer, 2000);
-	}
-
-	function onTimer()
-	{
-	    broadcast("timer");
-	}
-
-    function broadcast(message)
-    {
-        window.customMessageBus.broadcast(message);
-    }
-
-	window.addEventListener("load", onLoad);
-</script>
-
-<body>
-    <div id="root" style="position:absolute; top:0; left:0; height:100%; width:100%; color:#FFFFFF;" />
-        chromecast demo<br>
-    </div>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/receiver.css" />
+<body class="initial">
+	<div class="messages">
+		<h1>Waiting for Messages...</h1>
+	</div>
 </body>
+
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="https://www.gstatic.com/cast/js/receiver/1.0/cast_receiver.js"></script>
+<script>
+	$(function() {
+		var receiver = new cast.receiver.Receiver('217E0495', ['urn:x-cast:json']),
+			channelHandler = new cast.receiver.ChannelHandler('urn:x-cast:json'),
+			$messages = $('.messages'),
+			$body = $('body');
+		
+		channelHandler.addChannelFactory(
+			receiver.createChannelFactory('urn:x-cast:json'));
+
+		receiver.start();
+
+		channelHandler.addEventListener(cast.receiver.Channel.EventType.MESSAGE, onMessage.bind(this));
+
+		function onMessage(event) {
+			$messages.html(event.message.type);
+		}
+	});
+</script>
 
 </html>
