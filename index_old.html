@@ -1,0 +1,166 @@
+<!-- 
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ -->
+<!--
+This sample demonstrates how to build your own Receiver for use with Google
+Cast.
+
+A receiver is typically an HTML5 application with a html, css, and JavaScript
+components.
+
+In this HTML5 page, we include our style sheet, the Receiver SDK, and our player
+JavaScript code.
+
+We Then define two layers within the player:
+
+1. The media layers
+2. The Overlay layers
+The overlay layer holds:
+   a. Logo for startup page
+   b. Media Artwork and information during loading
+   c. controls for Pause / Seek
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cast Reference Receiver</title>
+
+
+
+
+
+  <link rel="stylesheet" href="player.css" />
+  <script type="text/javascript"
+        src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js">
+  </script>
+  <script type="text/javascript"
+        src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
+ 
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+     <script type="text/javascript">
+    (function () {
+        var mgr;
+        var bus;
+        var castReceiverManager_;
+        var castMessageBus_;
+        var mediaManager;
+
+        window.onload = function () {
+            this.castReceiverManager_ = cast.receiver.CastReceiverManager.getInstance();
+            this.castMessageBus_  = this.castReceiverManager_.getCastMessageBus('urn:x-cast:com.sample.hello', cast.receiver.CastMessageBus.MessageType.STRING);
+            this.castMessageBus_.onMessage = function(event) {
+            var message = event.data;
+            var senderId = event.senderId;
+            console.log('********onMessage********' + message);
+
+            $("#messages").append("<li>" + message + "</li>");
+
+
+            var mediaElement = document.getElementById('vid');  // eg. <video id='media'/>
+            //var mediaManager = new cast.receiver.MediaManager(mediaElement);
+
+            var url = "http://www.w3schools.com/tags/mov_bbb.mp4";
+            var host = new cast.player.api.Host({'mediaElement':mediaElement, 'url':url});
+
+
+            window.player = new cast.player.api.Player(host);
+
+            var protocol = null;
+            mediaElement.autoplay = true;
+            mediaElement.src = url;
+
+
+            document.getElementById("song").src = "http://play.wynk.in/srch_hungama/music/original/srch_hungama_2537377.mp3?token=1415018605_6e0dc7de851a145e762c506d24140839";
+            document.getElementById("song").load();
+            document.getElementById("song").play();
+          //  mediaElement.load();
+           // mediaElement.play();
+
+            document.getElementById("example_video_1").load();
+             document.getElementById("example_video_1").play();
+            //if (url.lastIndexOf('.m3u8') >= 0) {
+            // HTTP Live Streaming
+               //   protocol = cast.player.api.CreateHlsStreamingProtocol(host);
+             //   } else if (url.lastIndexOf('.mpd') >= 0) {
+            // MPEG-DASH
+                 // protocol = cast.player.api.CreateDashStreamingProtocol(host);
+               // } else if (url.indexOf('.ism/') >= 0) {
+            // Smooth Streaming
+                 // protocol = cast.player.api.CreateSmoothStreamingProtocol(host);
+             //   }
+
+           // window.player = new cast.player.api.Player(host);
+            
+           // window.player.load(cast.player.api.CreateDashStreamingProtocol(host));
+            
+          }
+     
+          //window.defaultOnLoad = mediaManager.onLoad;
+         // var mediaElement = document.getElementById('vid');
+        //  mediaManager = new cast.receiver.MediaManager(mediaElement);
+            this.castReceiverManager_.start();
+        }
+
+    })();
+</script>
+</head>
+<body style="background:white">
+    <h2 style="background:white">Wynk custom music by player.....</h2>
+
+    <div id="player" class="player"  style="height:200px;width:300px;top:100px;left:800px;visibility:hidden;">
+        <div class="media">
+            <video id="vid"></video>
+        </div>
+        <div class="logo"></div>
+        <div class="spinner"></div>
+        <div class="watermark"></div>
+        <div class="gradient"></div>
+        <div class="overlay">
+            <div class="media-info">
+                <div class="media-artwork"></div>
+                <div class="media-text">
+                    <div class="media-title"></div>
+                    <div class="media-subtitle"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <span class="controls-play-pause"></span>
+                <span class="controls-cur-time"></span>
+                <span class="controls-total-time"></span>
+                <div class="controls-progress">
+                    <div class="controls-progress-inner progressBar"></div>
+                    <div class="controls-progress-thumb"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+    <video id="example_video_1" class="video-js vjs-default-skin"
+  controls preload="auto" width="640" height="264"
+  poster="http://video-js.zencoder.com/oceans-clip.png"
+  data-setup='{"example_option":true}'>
+ <source src="http://www.w3schools.com/tags/mov_bbb.mp4" type='video/mp4' />
+ <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+</video>
+
+<audio id="song" > 
+</audio>
+   <ul id="messages"></ul>
+
+
+</body>
+</html>
